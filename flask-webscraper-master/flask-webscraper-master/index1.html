@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Web Scraper Frontend</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #f9f7f7, #f3e5f5);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 50px;
+    }
+    .container {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      width: 600px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #6a1b9a;
+      margin-bottom: 25px;
+    }
+    input[type="text"] {
+      width: 75%;
+      padding: 12px;
+      border: 2px solid #d1c4e9;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-right: 10px;
+      background-color: #fafafa;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #9575cd;
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #7e57c2;
+    }
+    #result {
+      background-color: #f3e5f5;
+      border: 1px solid #d1c4e9;
+      border-radius: 8px;
+      margin-top: 20px;
+      padding: 15px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: #4a148c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌸 Web Scraper</h1>
+    <div style="display: flex; justify-content: center;">
+      <input type="text" id="urlInput" placeholder="Enter URL to scrape" />
+      <button id="scrapeBtn">Scrape</button>
+    </div>
+    <pre id="result">Results will appear here...</pre>
+  </div>
+
+  <script>
+    document.getElementById('scrapeBtn').addEventListener('click', async () => {
+      const url = document.getElementById('urlInput').value;
+      const resultBox = document.getElementById('result');
+
+      if (!url) {
+        alert('Please enter a URL');
+        return;
+      }
+
+      resultBox.textContent = "⏳ Scraping in progress...";
+
+      try {
+        const response = await fetch('http://localhost:3000/scrape', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultBox.textContent = data.paragraphs.join('\n\n');
+        } else {
+          resultBox.textContent = '❌ Error: ' + data.error;
+        }
+      } catch (error) {
+        resultBox.textContent = '⚠️ Error: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>

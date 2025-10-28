@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Python Web Scraper Frontend</title>
+</head>
+<style> 
+   body{
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #f9f7f7, #f3e5f5);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding-top: 50px;
+   }
+   .container {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      width: 600px;
+      box-shadow: 0 6px 15px rgba(240, 187, 187, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #190c06;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      width: 550px;
+      padding: 12px;
+      border: 2px solid #e9cfc4;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-right: 10px;
+      background-color: #fafafa;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #9575cd;
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #f5f3f8;
+    }
+    #result {
+      background-color: #ebd1f1;
+      border: 1px solid #d1c4e9;
+      border-radius: 8px;
+      margin-top: 20px;
+      padding: 15px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: #4a148c;
+    }</style>
+    <h1>Web Scraper</h1>
+    <input type="text" id="urlInput" placeholder="Enter URL to scrape" size="50" />
+    <button id="scrapeBtn">Scrape</button>
+    <pre id="result" style="white-space: pre-wrap; max-height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></pre>
+
+    <script>
+        document.getElementById('scrapeBtn').addEventListener('click', async () => {
+            const url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/scrape', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('result').textContent = data.paragraphs.join('\n\n');
+                } else {
+                    document.getElementById('result').textContent = 'Error: ' + data.error;
+                }
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
